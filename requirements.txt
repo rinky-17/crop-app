@@ -1,7 +1,7 @@
 Flask
 numpy
 pandas
-scikit-learn
+scikit-learn==1.4.2
 shap
 plotly
 gunicorn
