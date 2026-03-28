@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI Crop Advisor</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            margin: 0;
+            padding: 0;
+            color: white;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            margin: 30px auto;
+            padding: 25px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        input, select {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            border: none;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input::placeholder {
+            color: #555;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #00c853;
+            color: white;
+            font-size: 16px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #00e676;
+            transform: scale(1.02);
+        }
+
+        .card {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .result { background: #00bfa5; }
+        .reason { background: #3949ab; }
+        .suggestion { background: #ff9800; }
+        .metrics { background: #263238; }
+
+        .card h3 {
+            margin: 0 0 10px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        @media (max-width: 700px) {
+            .row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>🌱 AI Crop Recommendation System</h1>
+
+<div class="container">
+
+<form action="/predict" method="POST">
+
+    <!-- Row 1 -->
+    <div class="row">
+        <input type="number" name="Nitrogen" placeholder="🌿 Nitrogen (N)" required>
+        <input type="number" name="Phosphorus" placeholder="🧪 Phosphorus (P)" required>
+        <input type="number" name="Potassium" placeholder="⚡ Potassium (K)" required>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="row">
+        <input type="number" name="Temperature" placeholder="🌡 Temperature (°C)" required>
+        <input type="number" name="Humidity" placeholder="💧 Humidity (%)" required>
+        <input type="number" name="Ph" placeholder="⚖️ pH Value" step="0.1" required>
+    </div>
+
+    <!-- Row 3 -->
+    <div class="row">
+        <input type="number" name="Rainfall" placeholder="🌧 Rainfall (mm)" required>
+
+        <select name="Soil">
+            <option disabled selected>🌍 Soil Type</option>
+            <option>Clay</option>
+            <option>Sandy</option>
+            <option>Loamy</option>
+            <option>Silty</option>
+            <option>Peaty</option>
+        </select>
+
+        <select name="Season">
+            <option disabled selected>☀️ Season</option>
+            <option>Summer</option>
+            <option>Winter</option>
+            <option>Monsoon</option>
+        </select>
+    </div>
+
+    <!-- Location -->
+    <div class="row">
+        <select name="Location">
+            <option disabled selected>📍 Location</option>
+            <option>Andhra Pradesh - Visakhapatnam</option>
+            <option>Telangana - Hyderabad</option>
+            <option>Tamil Nadu - Coimbatore</option>
+            <option>Karnataka - Mysuru</option>
+            <option>Maharashtra - Pune</option>
+            <option>Punjab - Ludhiana</option>
+            <option>Uttar Pradesh - Lucknow</option>
+            <option>West Bengal - Kolkata</option>
+        </select>
+    </div>
+
+    <button type="submit">🚀 Predict Best Crop</button>
+
+</form>
+
+<!-- RESULT -->
+{% if result %}
+<div class="card result center">
+    <h2>{{ result }}</h2>
+</div>
+{% endif %}
+
+<!-- REASON -->
+{% if reason %}
+<div class="card reason">
+    <h3>🧠 Why this crop?</h3>
+    <p>{{ reason }}</p>
+</div>
+{% endif %}
+
+<!-- SUGGESTIONS -->
+{% if suggestion_text %}
+<div class="card suggestion">
+    <h3>💡 Improvement Suggestions</h3>
+    <p>{{ suggestion_text }}</p>
+</div>
+{% endif %}
+
+<!-- LOCATION -->
+{% if loc_suggestion %}
+<div class="card">
+    <h3>📍 Popular Crops in Your Area</h3>
+    <p>{{ loc_suggestion }}</p>
+</div>
+{% endif %}
+
+<!-- METRICS -->
+{% if metrics %}
+<div class="card metrics">
+    <h3>📊 Model Performance</h3>
+    <p>Accuracy: {{ (metrics.accuracy * 100) | round(2) }}%</p>
+    <p>Precision: {{ (metrics.precision * 100) | round(2) }}%</p>
+    <p>Recall: {{ (metrics.recall * 100) | round(2) }}%</p>
+    <p>F1 Score: {{ (metrics.f1 * 100) | round(2) }}%</p>
+</div>
+{% endif %}
+
+<!-- GRAPH -->
+{% if graph %}
+<div class="card">
+    {{ graph|safe }}
+</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>
