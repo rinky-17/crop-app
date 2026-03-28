@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>🌱 AI Crop Recommendation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    font-family: 'Segoe UI';
+    background: linear-gradient(135deg,#1e3c72,#2a5298);
+    color:white;
+    margin:0;
+}
+
+h1 {
+    text-align:center;
+    margin-top:20px;
+}
+
+.container {
+    width:90%;
+    max-width:1000px;
+    margin:auto;
+    padding:20px;
+}
+
+/* FORM */
+.row {
+    display:flex;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+input, select {
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:none;
+    font-size:14px;
+}
+
+button {
+    width:100%;
+    padding:14px;
+    background:#00c853;
+    border:none;
+    border-radius:12px;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+/* CARDS */
+.card {
+    margin-top:20px;
+    padding:15px;
+    border-radius:15px;
+}
+
+.result { background:#00bfa5; text-align:center; }
+.why { background:#3949ab; }
+.suggestion { background:#ff9800; }
+.metrics { background:#263238; }
+
+/* TOP 3 GRID */
+.top3-container {
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    margin-top:20px;
+}
+
+.crop-card {
+    flex:1;
+    min-width:250px;
+    background:white;
+    color:black;
+    border-radius:15px;
+    padding:15px;
+    text-align:center;
+}
+
+.progress {
+    background:#ddd;
+    border-radius:10px;
+    height:10px;
+    margin-top:10px;
+}
+
+.progress-bar {
+    height:10px;
+    border-radius:10px;
+    background:#00c853;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+    .row{flex-direction:column;}
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>🌱 AI Crop Recommendation System</h1>
+
+<div class="container">
+
+<form method="POST" action="/predict">
+
+<div class="row">
+<select name="language">
+<option value="en">🌐 English</option>
+<option value="hi">🇮🇳 हिन्दी</option>
+<option value="te">🇮🇳 తెలుగు</option>
+<option value="ta">🇮🇳 தமிழ்</option>
+<option value="kn">🇮🇳 ಕನ್ನಡ</option>
+</select>
+</div>
+
+<div class="row">
+<input name="Nitrogen" placeholder="🌿 Nitrogen">
+<input name="Phosphorus" placeholder="🧪 Phosphorus">
+<input name="Potassium" placeholder="⚡ Potassium">
+</div>
+
+<div class="row">
+<input name="Temperature" placeholder="🌡 Temperature">
+<input name="Humidity" placeholder="💧 Humidity">
+<input name="Ph" placeholder="⚖️ pH">
+</div>
+
+<div class="row">
+<input name="Rainfall" placeholder="🌧 Rainfall">
+
+<select name="Soil">
+<option disabled selected>🌍 Soil Type</option>
+<option>Clay</option>
+<option>Sandy</option>
+<option>Loamy</option>
+<option>Silty</option>
+<option>Peaty</option>
+</select>
+
+<select name="Season">
+<option disabled selected>☀️ Season</option>
+<option>Summer</option>
+<option>Winter</option>
+<option>Monsoon</option>
+</select>
+</div>
+
+<div class="row">
+<select name="Location">
+<option disabled selected>📍 Location</option>
+<option>Andhra Pradesh - Visakhapatnam</option>
+<option>Telangana - Hyderabad</option>
+<option>Tamil Nadu - Coimbatore</option>
+<option>Karnataka - Mysuru</option>
+<option>Maharashtra - Pune</option>
+<option>Punjab - Ludhiana</option>
+<option>Uttar Pradesh - Lucknow</option>
+<option>West Bengal - Kolkata</option>
+</select>
+</div>
+
+<button>🚀 Predict</button>
+
+</form>
+
+<!-- RESULT -->
+{% if result %}
+<div class="card result">
+<h2>{{ result }}</h2>
+</div>
+{% endif %}
+
+<!-- TOP 3 CARDS -->
+{% if top3_list %}
+<div class="top3-container">
+{% for crop, conf in top3_list %}
+<div class="crop-card">
+<h3>{{ crop }}</h3>
+<p>{{ conf }}%</p>
+<div class="progress">
+<div class="progress-bar" style="width:{{ conf }}%"></div>
+</div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+
+<!-- WHY -->
+{% if reason %}
+<div class="card why">
+<h3>🤔 {{ t.get('why','Why this crop?') }}</h3>
+<p>{{ reason }}</p>
+</div>
+{% endif %}
+
+<!-- SUGGESTIONS -->
+{% if suggestion_text %}
+<div class="card suggestion">
+<h3>💡 {{ t.get('suggestion','Suggestions') }}</h3>
+<p>{{ suggestion_text }}</p>
+</div>
+{% endif %}
+
+<!-- METRICS -->
+{% if metrics %}
+<div class="card metrics">
+<h3>📊 {{ t.get('graph','Performance') }}</h3>
+<p>{{ t.get('accuracy','Accuracy') }}: {{ (metrics.accuracy*100)|round(2) }}%</p>
+<p>{{ t.get('precision','Precision') }}: {{ (metrics.precision*100)|round(2) }}%</p>
+<p>{{ t.get('recall','Recall') }}: {{ (metrics.recall*100)|round(2) }}%</p>
+<p>{{ t.get('f1','F1 Score') }}: {{ (metrics.f1*100)|round(2) }}%</p>
+</div>
+{% endif %}
+
+<!-- GRAPH -->
+{% if graph %}
+<div class="card">
+{{ graph|safe }}
+</div>
+{% endif %}
+
+</div>
+
+</body>
+</html>
